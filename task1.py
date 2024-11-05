@@ -32,18 +32,43 @@ class Birthday(Field):
         except ValueError:
             raise ValueError("Invalid date format. Use DD.MM.YYYY")
 
+class Email(Field):
+    def __init__(self, email):
+        if not self.validate_email(email):
+            raise ValueError("Invalid email format.")
+        super().__init__(email)
+
+    @staticmethod
+    def validate_email(email):
+        return bool(re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', email))
+
+
+class Address(Field):
+    def __init__(self, address):
+        if not isinstance(address, str) or not address:
+            raise ValueError("Address must be a non-empty string")
+        super().__init__(address)
 
 class Record:
     def __init__(self, name):
         self.name = Name(name)
         self.phones = []
         self.birthday = None
+        self.email = None
+        self.address = None
+
 
     def add_phone(self, phone):
         self.phones.append(Phone(phone))
 
     def add_birthday(self, birthday):
         self.birthday = Birthday(birthday)
+        
+    def add_email(self, email):
+        self.email = Email(email)
+
+    def add_address(self, address):
+        self.address = Address(address)
 
     def get_birthday(self):
         return self.birthday.value if self.birthday else None
@@ -59,19 +84,50 @@ class AddressBook:
     def find(self, name):
         return self.contacts.get(name)
 
-    def get_upcoming_birthdays(self):
-        upcoming_birthdays = []
-        today = datetime.now()
-        next_week = today + timedelta(days=7)
+    def get_birthdays_in_days(self, days):
+        contacts_with_upcoming_birthdays = []
+        target_date = datetime.now() + timedelta(days=days)
+        current_year = datetime.now().year
 
         for record in self.contacts.values():
             if record.birthday:
-                birthday = record.get_birthday()
-                if (birthday.month == today.month and birthday.day >= today.day) or \
-                   (birthday.month == next_week.month and birthday.day <= next_week.day):
-                    upcoming_birthdays.append(record.name.value)
+                birthday_this_year = record.birthday.value.replace(year=current_year)
+                
+                if birthday_this_year.date() == target_date.date():
+                    contacts_with_upcoming_birthdays.append(record.name.value)
 
-        return upcoming_birthdays
+        return contacts_with_upcoming_birthdays
+    
+    def change_name(self, old_name, new_name):
+        record = self.contacts.pop(old_name, None)
+        if record is None:
+            raise ValueError("Contact not found.")
+        if new_name in self.contacts:
+            raise ValueError("A contact with the new name already exists.")
+        
+        record.name = Name(new_name)
+        self.contacts[new_name] = record
+        return f"Contact name changed from {old_name} to {new_name}."
+
+    def delete_contact(self, name):
+        if name in self.contacts:
+            del self.contacts[name]
+            return f"Contact {name} deleted."
+        else:
+            raise ValueError("Contact not found.")
+
+def birthdays_in_days(args, book: AddressBook):
+    if len(args) < 1:
+        return "Please provide the number of days."
+    try:
+        days = int(args[0])
+    except ValueError:
+        return "Please provide a valid number of days."
+
+    contacts = book.get_birthdays_in_days(days)
+    if not contacts:
+        return f"No contacts with birthdays in {days} days."
+    return f"Contacts with birthdays in {days} days: " + ", ".join(contacts)
 
 
 def input_error(func):
@@ -83,6 +139,21 @@ def input_error(func):
         except Exception as e:
             return f"An error occurred: {str(e)}"
     return wrapper
+
+@input_error
+def change_contact_name(args, book: AddressBook):
+    if len(args) < 2:
+        raise ValueError("Please provide both the current name and the new name.")
+    old_name, new_name = args
+    return book.change_name(old_name, new_name)
+
+
+@input_error
+def delete_contact(args, book: AddressBook):
+    if len(args) < 1:
+        raise ValueError("Please provide the name of the contact to delete.")
+    name = args[0]
+    return book.delete_contact(name)
 
 
 @input_error
@@ -96,6 +167,27 @@ def add_birthday(args, book):
     record.add_birthday(birthday)
     return f"Birthday for {name} added."
 
+@input_error
+def add_email(args, book: AddressBook):
+    if len(args) < 2:
+        raise ValueError("Please provide both name and email.")
+    name, email = args
+    record = book.find(name)
+    if record is None:
+        raise ValueError("Contact not found.")
+    record.add_email(email)
+    return f"Email for {name} added."
+
+@input_error
+def add_address(args, book: AddressBook):
+    if len(args) < 2:
+        raise ValueError("Please provide both name and address.")
+    name, address = args
+    record = book.find(name)
+    if record is None:
+        raise ValueError("Contact not found.")
+    record.add_address(address)
+    return f"Address for {name} added."
 
 @input_error
 def show_birthday(args, book):
@@ -170,7 +262,22 @@ def main():
 
         elif command == "birthdays":
             print(birthdays(args, book))
+        
+        elif command == "add-email":
+            print(add_email(args, book))
 
+        elif command == "add-address":
+            print(add_address(args, book))
+            
+        elif command == "birthdays-in-days":
+            print(birthdays_in_days(args, book))
+
+        elif command == "change-name":
+            print(change_contact_name(args, book))
+
+        elif command == "delete":
+            print(delete_contact(args, book))
+            
         else:
             print("Invalid command.")
 
