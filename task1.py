@@ -49,6 +49,16 @@ class Address(Field):
             raise ValueError("Address must be a non-empty string")
         super().__init__(address)
 
+
+class  Notes(Field):
+    def __init__(self, notes):
+        if not isinstance(notes, str):
+            raise ValueError("Notes must be a string")
+        super().__init__(notes)
+
+
+        
+
 class Record:
     def __init__(self, name):
         self.name = Name(name)
@@ -56,6 +66,7 @@ class Record:
         self.birthday = None
         self.email = None
         self.address = None
+        self.notes = []
 
 
     def add_phone(self, phone):
@@ -69,6 +80,12 @@ class Record:
 
     def add_address(self, address):
         self.address = Address(address)
+
+    def add_notes(self, notes):
+        self.notes.append(notes) 
+
+    def get_notes(self):
+        return "\n".join(self.notes) if self.notes else None     
 
     def get_birthday(self):
         return self.birthday.value if self.birthday else None
@@ -223,7 +240,27 @@ def load_data(filename="addressbook.pkl"):
         with open(filename, "rb") as f:
             return pickle.load(f)
     except FileNotFoundError:
-        return AddressBook() 
+        return AddressBook()
+
+def add_notes(args, book: AddressBook):
+    if len(args) < 2:
+        raise ValueError ("Please provide both name and notes")
+    name, notes = args[0], " ".join(args[1:])
+    record = book.find(name)
+    if record is None:
+        raise ValueError("Contact not found.")
+    record.add_notes(notes)
+    return f"Notes for {name} added."
+
+def show_notes(args, book: AddressBook):
+    if len(args) < 1:
+        raise ValueError("Please provide a name.")
+    name = args[0]
+    record = book.find(name)
+    if record is None:
+        raise ValueError("Contact not found.")
+    notes = record.get_notes()
+    return f"{name}'s notes:\n{notes}" if notes else f"{name} has no notes recorded."
 
 
 def main():
@@ -277,6 +314,12 @@ def main():
 
         elif command == "delete":
             print(delete_contact(args, book))
+
+        elif command == "add-notes":
+            print(add_notes(args, book))
+
+        elif command == "show-notes":
+            print(show_notes(args, book))        
             
         else:
             print("Invalid command.")
