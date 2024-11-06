@@ -241,7 +241,8 @@ def load_data(filename="addressbook.pkl"):
             return pickle.load(f)
     except FileNotFoundError:
         return AddressBook()
-
+    
+@input_error
 def add_notes(args, book: AddressBook):
     if len(args) < 2:
         raise ValueError ("Please provide both name and notes")
@@ -252,6 +253,7 @@ def add_notes(args, book: AddressBook):
     record.add_notes(notes)
     return f"Notes for {name} added."
 
+@input_error
 def show_notes(args, book: AddressBook):
     if len(args) < 1:
         raise ValueError("Please provide a name.")
