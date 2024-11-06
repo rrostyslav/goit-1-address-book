@@ -55,9 +55,12 @@ class  Notes(Field):
         if not isinstance(notes, str):
             raise ValueError("Notes must be a string")
         super().__init__(notes)
+        self.created_at = datetime.now()
+
+    def __str__(self):
+        return f"{self.value} (Created on: {self.created_at.strftime('%d.%m.%Y %H:%M')})"
 
 
-        
 
 class Record:
     def __init__(self, name):
@@ -82,10 +85,11 @@ class Record:
         self.address = Address(address)
 
     def add_notes(self, notes):
-        self.notes.append(notes) 
+        note = Notes(notes)
+        self.notes.append(note) 
 
     def get_notes(self):
-        return "\n".join(self.notes) if self.notes else None     
+        return "\n".join(str(note) for note in self.notes) if self.notes else None     
 
     def get_birthday(self):
         return self.birthday.value if self.birthday else None
