@@ -114,7 +114,7 @@ class AddressBook:
             if record.birthday:
                 birthday_this_year = record.birthday.value.replace(year=current_year)
                 
-                if birthday_this_year.date() == target_date.date():
+                if birthday_this_year.date() <= target_date.date():
                     contacts_with_upcoming_birthdays.append(record.name.value)
 
         return contacts_with_upcoming_birthdays
@@ -137,7 +137,7 @@ class AddressBook:
         else:
             raise ValueError("Contact not found.")
 
-def birthdays_in_days(args, book: AddressBook):
+def birthdays_in_days(args, book):
     if len(args) < 1:
         return "Please provide the number of days."
     try:
@@ -211,7 +211,7 @@ def add_address(args, book: AddressBook):
     return f"Address for {name} added."
 
 @input_error
-def show_birthday(args, book):
+def show_birthday(args, book: AddressBook):
     if len(args) < 1:
         raise ValueError("Please provide a name.")
     name = args[0]
@@ -220,14 +220,6 @@ def show_birthday(args, book):
         raise ValueError("Contact not found.")
     birthday = record.get_birthday()
     return f"{name}'s birthday is on {birthday.strftime('%d.%m.%Y')}" if birthday else f"{name} has no birthday recorded."
-
-
-@input_error
-def birthdays(args, book):
-    upcoming_birthdays = book.get_upcoming_birthdays()
-    if not upcoming_birthdays:
-        return "No upcoming birthdays."
-    return "Upcoming birthdays: " + ", ".join(upcoming_birthdays)
 
 
 def parse_input(user_input):
@@ -302,9 +294,6 @@ def main():
 
         elif command == "show-birthday":
             print(show_birthday(args, book))
-
-        elif command == "birthdays":
-            print(birthdays(args, book))
         
         elif command == "add-email":
             print(add_email(args, book))
