@@ -5,6 +5,7 @@ import pickle
 class Field:
     def __init__(self, value):
         self.value = value
+        
 
 
 class Name(Field):
@@ -89,10 +90,22 @@ class Record:
         self.notes.append(note) 
 
     def get_notes(self):
-        return "\n".join(str(note) for note in self.notes) if self.notes else None     
+        return "\n".join(f"{index + 1}. {note}" for index, note in enumerate(self.notes)) if self.notes else None     
 
     def get_birthday(self):
         return self.birthday.value if self.birthday else None
+
+    def delete_note_by_index(self, index):
+        if 0 <= index < len(self.notes):
+            del self.notes[index]
+        else:
+            raise IndexError("Note index out of range.")
+
+    def edit_note_by_index(self, index, new_note):
+        if 0 <= index < len(self.notes):
+            self.notes[index] = Notes(new_note)
+        else:
+            raise IndexError("Note index out of range.")
 
 
 class AddressBook:
@@ -241,7 +254,7 @@ def load_data(filename="addressbook.pkl"):
 @input_error
 def add_notes(args, book: AddressBook):
     if len(args) < 2:
-        raise ValueError ("Please provide both name and notes")
+        raise ValueError("Please provide both name and notes")
     name, notes = args[0], " ".join(args[1:])
     record = book.find(name)
     if record is None:
@@ -259,6 +272,28 @@ def show_notes(args, book: AddressBook):
         raise ValueError("Contact not found.")
     notes = record.get_notes()
     return f"{name}'s notes:\n{notes}" if notes else f"{name} has no notes recorded."
+
+@input_error
+def delete_note_command(args, book: AddressBook):
+    if len(args) < 2:
+        raise ValueError("Please provide name and note index.")
+    name, index = args[0], int(args[1])
+    record = book.find(name)
+    if record is None:
+        raise ValueError("Contact not found.")
+    record.delete_note_by_index(index - 1)
+    return f"Note {index} for {name} deleted."
+
+@input_error
+def edit_note_command(args, book: AddressBook):
+    if len(args) < 3:
+        raise ValueError("Please provide name, note index, and new note.")
+    name, index, new_note = args[0], int(args[1]), " ".join(args[2:])
+    record = book.find(name)
+    if record is None:
+        raise ValueError("Contact not found.")
+    record.edit_note_by_index(index - 1, new_note)  # Adjusting for 1-based index
+    return f"Note {index} for {name} updated."
 
 
 def main():
@@ -316,6 +351,12 @@ def main():
         elif command == "show-notes":
             print(show_notes(args, book))        
             
+        elif command == "delete-note":
+            print(delete_note_command(args, book))
+
+        elif command == "edit-note":
+            print(edit_note_command(args, book))
+
         else:
             print("Invalid command.")
 
