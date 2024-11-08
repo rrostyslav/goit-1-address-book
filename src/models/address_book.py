@@ -3,6 +3,7 @@ from src.models.name import Name
 from src.decorators.observable import observable, notify_observers
 from src.constants.observers import Observers
 from src.models.record import Record
+import pickle
 
 
 @observable
@@ -136,3 +137,16 @@ class AddressBook:
         notes = record.get_notes()
 
         return name, notes
+    
+    @notify_observers(Observers.SaveData)
+    def save_data(self, filename="addressbook.pkl"):
+        with open(filename, "wb") as f:
+           pickle.dump(self, f)
+
+
+def load_data(filename="addressbook.pkl"):
+    try:
+        with open(filename, "rb") as f:
+            return pickle.load(f)
+    except FileNotFoundError:
+        return AddressBook()       
