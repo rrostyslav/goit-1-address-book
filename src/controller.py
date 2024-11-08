@@ -110,3 +110,18 @@ class Controller:
         name = self.view.show_notes()
         # Викликає метод моделі для показу нотаток
         self.model.show_notes(name)
+
+    def delete_note(self):
+        name, index = self.view.delete_note()
+        try:
+            self.model.delete_note(name, index)
+        except Exception as e:
+            print(e)
+
+
+    def edit_note(self):
+        name, index, new_note = self.view.edit_note()
+        try:
+            self.model.edit_note(name, index, new_note)
+        except Exception as e:
+            print(e)

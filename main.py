@@ -26,14 +26,17 @@ def main():
     print("10. Change name of contact")
     print("11. Add notes")
     print("12. Show notes")
+    print("13. Edit note")
+    print("14. Delete note")
+    print("0. Exit program")
 
     while True:
         try:
             # Запитує у користувача вибір номера опції з діапазону від 0 до 12
             option = input_number(
-                prompt="Select option number: ",
+                prompt="\n\nMAIN MENU\n\nSelect option (1-14) >>> ",
                 min_value=0,
-                max_value=12,
+                max_value=14,
             )
 
             # Виконує відповідну дію, залежно від вибраної опції
@@ -61,7 +64,11 @@ def main():
                 case 11:
                     controller.add_notes()  # Додає нотатки до контакту
                 case 12:
-                    controller.show_notes()  # Показує нотатки
+                    controller.show_notes() # Показує нотатки
+                case 13:
+                    controller.edit_note()
+                case 14:
+                    controller.delete_note()
                 case 0:
                     # Завершує роботу програми, зберігаючи дані адресної книги
                     print("Good bye")
@@ -69,7 +76,7 @@ def main():
                     break
         except KeyboardInterrupt:
             # Обробляє завершення програми при натисканні Ctrl+C, зберігаючи дані адресної книги
-            print("\nGood bye") 
+            print("\nGood bye")
             address_book.save_data()
             break
 
