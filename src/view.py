@@ -1,25 +1,28 @@
-from src.decorators.observer import observer_class, observer
-from src.constants.observers import Observers
-from src.utils.valid_input import input_string, input_phone, input_email, input_number
-
+from src.decorators.observer import observer_class, observer  # Імпортує декоратори для реалізації патерну "спостерігач"
+from src.constants.observers import Observers  # Імпортує константи, що визначають типи сповіщень для спостерігачів
+from src.utils.valid_input import input_string, input_phone, input_email, input_number  # Імпортує функції для введення та валідації даних
 
 @observer_class
 class View:
+    # Ініціалізує представлення з моделлю даних
     def __init__(self, model):
         self.__model__ = model
 
     @staticmethod
     def clear():
+        # Очищує консоль
         print("\033[H\033[J", end="")
 
     @staticmethod
     def render(*args):
+        # Відображає передані аргументи у вигляді тексту
         print(*args)
 
-    # Input
+    # Методи введення даних
 
     @staticmethod
     def add_contact():
+        # Запитує ім'я та телефон для нового контакту
         name = input_string("Enter name: ")
         phone = input_phone("Enter phone: ")
 
@@ -27,36 +30,42 @@ class View:
 
     @staticmethod
     def change_contact():
+        # Запитує ім'я контакту і новий номер телефону для зміни
         name = input_string("Enter name: ")
-        phone = input_phone(f'Enter new phone for "${name}": ')
+        phone = input_phone(f'Enter new phone for "{name}": ')
 
         return name, phone
 
     @staticmethod
     def show_phone():
+        # Запитує ім'я контакту для показу номеру телефону
         name = input_string("Enter name of contact: ")
 
         return name
 
     @staticmethod
     def show_all_contacts():
+        # Показує всі контакти (поки що реалізація відсутня)
         pass
 
     @staticmethod
     def add_birthday():
+        # Запитує ім'я контакту та додає дату народження
         name = input_string("Enter name of contact for which you want add birthday: ")
-        birthday = input_string(f'Enter birthday for ${name}: ')
+        birthday = input_string(f'Enter birthday for "{name}": ')
 
         return name, birthday
 
     @staticmethod
     def show_birthday():
+        # Запитує ім'я контакту для показу дня народження
         name = input_string("Enter name: ")
 
         return name
 
     @staticmethod
     def add_email():
+        # Запитує ім'я та електронну адресу контакту
         name = input_string("Enter name: ")
         email = input_email("Enter email: ")
 
@@ -64,6 +73,7 @@ class View:
 
     @staticmethod
     def add_address():
+        # Запитує ім'я та адресу контакту
         name = input("Enter name: ")
         address = input("Enter address: ")
 
@@ -71,12 +81,14 @@ class View:
 
     @staticmethod
     def show_birthdays_in_days():
+        # Запитує кількість днів, щоб показати дні народження в межах цього періоду
         days = input_number("Enter number of days from now to show birthdays: ")
 
         return days
 
     @staticmethod
     def change_name():
+        # Запитує старе та нове ім'я для зміни контакту
         old_name = input_string("Enter old name: ")
         new_name = input_string("Enter new name: ")
 
@@ -84,14 +96,16 @@ class View:
 
     @staticmethod
     def delete_contact():
+        # Запитує ім'я контакту для видалення
         name = input_string("Enter name of contact to delete: ")
 
         return name
 
     @staticmethod
     def add_notes():
-        name = input_string("Enter name of contact o add notes: ")
-        number_of_notes = input_number("How much notes you want to add (number): ")
+        # Запитує ім'я контакту та додає нотатки
+        name = input_string("Enter name of contact to add notes: ")
+        number_of_notes = input_number("How many notes do you want to add (number): ")
         notes = []
 
         for i in range(number_of_notes):
@@ -102,6 +116,7 @@ class View:
 
     @staticmethod
     def show_notes():
+        # Запитує ім'я контакту для показу нотаток
         name = input_string("Enter name: ")
 
         return name
@@ -124,6 +139,7 @@ class View:
 
 
     # Output
+    # Методи виведення даних
 
     @observer(Observers.EditNote)
     def edit_note_result(self, **kwargs):
@@ -139,6 +155,7 @@ class View:
 
     @observer(Observers.ShowPhone)
     def show_phone_result(self, **kwargs):
+        # Відображає телефонні номери для вказаного контакту
         name, = kwargs.get('args')
         phones = kwargs.get('result')
 
@@ -146,10 +163,12 @@ class View:
 
     @observer(Observers.AddContact)
     def add_contact_result(self, **kwargs):
+        # Відображає повідомлення після додавання контакту
         self.render("Contact added")
 
     @observer(Observers.ShowAllContacts)
     def show_all_contacts_result(self, **kwargs):
+        # Відображає всі контакти
         contacts = kwargs.get('result')
 
         if contacts is None:
@@ -158,6 +177,7 @@ class View:
         self.render("\n".join([f"{name}: {', '.join(phones)}" for name, phones in contacts.items()]))
 
     def change_contact_name(self):
+        # Запитує старе та нове ім'я для зміни контакту
         old_name = input_string("Enter old name: ")
         new_name = input_string("Enter new name: ")
 
@@ -165,12 +185,14 @@ class View:
 
     @observer(Observers.ChangeContactName)
     def change_contact_name_result(self, **kwargs):
+        # Відображає результат зміни імені контакту
         old_name, new_name = kwargs.get('args')
         new_name = kwargs.get('result')
 
         self.render(f"Contact '{old_name}' has been changed to '{new_name}'")
 
     def change_contact_phone(self):
+        # Запитує ім'я контакту, старий та новий номер телефону
         name = input_string("Enter contact name: ")
         old_phone = input_phone("Enter old phone: ")
         new_phone = input_phone("Enter new phone: ")
@@ -179,33 +201,39 @@ class View:
 
     @observer(Observers.ChangeContactPhone)
     def change_contact_phone_result(self, **kwargs):
+        # Відображає результат зміни номера телефону контакту
         name, old_phone, new_phone = kwargs.get('result')
 
         self.render(f"You changed phone for contact '{name}' from {old_phone} to {new_phone}")
 
     @observer(Observers.AddBirthday)
     def add_birthday_result(self, **kwargs):
+        # Відображає результат додавання дати народження
         name, birthday = kwargs.get('result')
         self.render(f"Birthday for {name} set to {birthday}.")
 
     @observer(Observers.ShowBirthday)
     def show_birthday_result(self, **kwargs):
+        # Відображає дату народження контакту
         name, birthday = kwargs.get('result')
         self.render(f"{name}'s birthday is on {birthday.strftime('%d.%m.%Y')}" if birthday else f"{name} has no birthday recorded.")
 
     @observer(Observers.AddEmail)
     def add_email_result(self, **kwargs):
+        # Відображає результат додавання електронної адреси
         name, email = kwargs.get('result')
         self.render(f"Email '{email}' for {name} added.")
 
     @observer(Observers.AddAddress)
     def add_address_result(self, **kwargs):
+        # Відображає результат додавання адреси
         name, address = kwargs.get('result')
 
         self.render(f"Address for {name} added. Address: {address}")
 
     @observer(Observers.ShowBirthdaysInDays)
     def show_birthdays_in_days_result(self, **kwargs):
+        # Відображає контакти, які мають дні народжень у зазначений період
         days, = kwargs.get('args')
         contacts = kwargs.get('result')
         if not contacts:
@@ -214,6 +242,7 @@ class View:
 
     @observer(Observers.DeleteContact)
     def delete_contact_result(self, **kwargs):
+        # Відображає результат видалення контакту
         name = kwargs.get('args')
         result = kwargs.get('result')
 
@@ -224,12 +253,14 @@ class View:
 
     @observer(Observers.AddNotes)
     def add_notes_result(self, **kwargs):
+        # Відображає результат додавання нотаток
         name = kwargs.get('result')
 
         self.render(f"Notes for {name} added.")
 
     @observer(Observers.ShowNotes)
     def show_notes_result(self, **kwargs):
+        # Відображає нотатки для вказаного контакту
         name, notes = kwargs.get('result')
 
         self.render(f"{name}'s notes:\n{notes}" if notes else f"{name} has no notes recorded.")

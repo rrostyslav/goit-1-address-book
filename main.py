@@ -1,15 +1,18 @@
-from src.utils.valid_input import input_number
-from src.view import View
-from src.models.address_book import load_data
-from src.controller import Controller
-
-
+from src.decorators.handle_error import handle_error  # Імпортує декоратор для обробки помилок
+from src.utils.valid_input import input_string, input_number  # Імпортує функції для введення та валідації даних
+from src.view import View  # Імпортує клас View для роботи з інтерфейсом користувача
+from src.models.address_book import load_data  # Імпортує функцію для завантаження даних адресної книги
+from src.controller import Controller  # Імпортує клас Controller для управління даними
 
 def main():
+    # Завантажує дані адресної книги з файлу
     address_book = load_data()
+    # Створює об'єкт View для відображення інформації, використовуючи завантажені дані
     view = View(address_book)
+    # Створює об'єкт Controller для управління адресною книгою, використовуючи дані та об'єкт View
     controller = Controller(address_book, view)
 
+    # Виводить меню з основними опціями
     print("Main menu:")
     print("1. Add contact")
     print("2. Show phone")
@@ -29,49 +32,54 @@ def main():
 
     while True:
         try:
+            # Запитує у користувача вибір номера опції з діапазону від 0 до 12
             option = input_number(
                 prompt="\n\nMAIN MENU\n\nSelect option (1-14) >>> ",
                 min_value=0,
                 max_value=14,
             )
 
+            # Виконує відповідну дію, залежно від вибраної опції
             match option:
                 case 1:
-                    controller.add_contact()
+                    controller.add_contact()  # Додає новий контакт
                 case 2:
-                    controller.show_phone()
+                    controller.show_phone()  # Показує телефон контакту
                 case 3:
-                    controller.show_all_contacts()
+                    controller.show_all_contacts()  # Показує всі контакти
                 case 4:
-                    controller.change_contact_phone()
+                    controller.change_contact_phone()  # Змінює телефон контакту
                 case 5:
-                    controller.add_birthday()
+                    controller.add_birthday()  # Додає день народження до контакту
                 case 6:
-                    controller.show_birthday()
+                    controller.show_birthday()  # Показує дату народження контакту
                 case 7:
-                    controller.add_email()
+                    controller.add_email()  # Додає електронну адресу до контакту
                 case 8:
-                    controller.add_address()
+                    controller.add_address()  # Додає адресу до контакту
                 case 9:
-                    controller.show_birthdays_in_days()
+                    controller.show_birthdays_in_days()  # Показує дні народжень у зазначений період
                 case 10:
-                    controller.change_contact_name()
+                    controller.change_contact_name()  # Змінює ім'я контакту
                 case 11:
-                    controller.add_notes()
+                    controller.add_notes()  # Додає нотатки до контакту
                 case 12:
-                    controller.show_notes()
+                    controller.show_notes() # Показує нотатки
                 case 13:
                     controller.edit_note()
                 case 14:
                     controller.delete_note()
                 case 0:
+                    # Завершує роботу програми, зберігаючи дані адресної книги
                     print("Good bye")
                     address_book.save_data()
                     break
         except KeyboardInterrupt:
-            print("\nGood bye") 
+            # Обробляє завершення програми при натисканні Ctrl+C, зберігаючи дані адресної книги
+            print("\nGood bye")
             address_book.save_data()
             break
 
+# Основна точка входу в програму
 if __name__ == "__main__":
     main()

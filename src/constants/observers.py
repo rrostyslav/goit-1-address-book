@@ -1,5 +1,6 @@
-from enum import Enum
+from enum import Enum  # Імпортує клас Enum для створення перерахування
 
+# Клас Observers, що представляє типи сповіщень для спостерігачів
 class Observers(Enum):
     LoadData = 'LoadData'
     SaveData = 'SaveData'
