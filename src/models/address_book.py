@@ -144,9 +144,25 @@ class AddressBook:
            pickle.dump(self, f)
 
 
+    @notify_observers(Observers.DeleteNote)
+    def delete_note(self, name, index):
+        record = self.find(name)
+        if record is None:
+            raise ValueError("Contact not found.")
+        record.delete_note_by_index(index - 1)
+        return index, name
+
+    @notify_observers(Observers.EditNote)
+    def edit_note(self, name, index, new_note):
+        record = self.find(name)
+        if record is None:
+            raise ValueError("Contact not found.")
+        record.edit_note_by_index(index - 1, new_note)  # Adjusting for 1-based index
+        return index, name
+
 def load_data(filename="addressbook.pkl"):
     try:
         with open(filename, "rb") as f:
             return pickle.load(f)
     except FileNotFoundError:
-        return AddressBook()       
+        return AddressBook()

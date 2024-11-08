@@ -1,5 +1,4 @@
-from src.decorators.handle_error import handle_error
-from src.utils.valid_input import input_string, input_number
+from src.utils.valid_input import input_number
 from src.view import View
 from src.models.address_book import load_data
 from src.controller import Controller
@@ -24,13 +23,16 @@ def main():
     print("10. Change name of contact")
     print("11. Add notes")
     print("12. Show notes")
+    print("13. Edit note")
+    print("14. Delete note")
+    print("0. Exit program")
 
     while True:
         try:
             option = input_number(
-                prompt="Select option number: ",
+                prompt="\n\nMAIN MENU\n\nSelect option (1-14) >>> ",
                 min_value=0,
-                max_value=12,
+                max_value=14,
             )
 
             match option:
@@ -58,6 +60,10 @@ def main():
                     controller.add_notes()
                 case 12:
                     controller.show_notes()
+                case 13:
+                    controller.edit_note()
+                case 14:
+                    controller.delete_note()
                 case 0:
                     print("Good bye")
                     address_book.save_data()

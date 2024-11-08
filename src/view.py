@@ -106,8 +106,36 @@ class View:
 
         return name
 
+    @staticmethod
+    def delete_note():
+        name = input_string("Enter name of contact: ")
+        index = input_number("Enter index to delete note: ")
+
+        return name, index
+
+    @staticmethod
+    def edit_note():
+        name = input_string("Enter name of contact: ")
+        index = input_number("Enter index of note: ")
+        new_note = input_string("Enter text of new note: ")
+
+        return name, index, new_note
+
+
 
     # Output
+
+    @observer(Observers.EditNote)
+    def edit_note_result(self, **kwargs):
+        index, name = kwargs.get('result')
+
+        self.render(f"Note {index} for {name} updated.")
+
+    @observer(Observers.DeleteNote)
+    def delete_note_result(self, **kwargs):
+        index, name = kwargs.get('result')
+
+        self.render(f"Note {index} for {name} deleted.")
 
     @observer(Observers.ShowPhone)
     def show_phone_result(self, **kwargs):

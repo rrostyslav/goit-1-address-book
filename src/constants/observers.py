@@ -16,3 +16,5 @@ class Observers(Enum):
     ShowNotes = 'ShowNotes'
     ChangeContactPhone = 'ChangeContactPhone'
     ShowAllContacts = 'ShowAllContacts'
+    DeleteNote = 'DeleteNote'
+    EditNote = 'EditNote'
