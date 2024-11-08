@@ -62,9 +62,29 @@ class Controller:
         self.model.delete_contact(name)
 
     def add_notes(self):
-        name, notes = self.view.add_notes()
-        self.model.add_notes(name, notes)
+        name, note = self.view.add_notes()
+        self.model.add_notes(name, note)
 
     def show_notes(self):
         name = self.view.show_notes()
-        self.model.show_notes(name)
+        notes = self.model.show_notes(name)
+        self.view.show_notes_result(args=(name,), result=notes)
+
+    def edit_notes(self):
+        name = self.view.get_contact_name()
+        note_id = self.view.get_note_id()
+        new_content = self.view.get_new_note_content()
+        try:
+            self.model.edit_note(name, note_id, new_content)
+            self.view.edit_notes_result(name, note_id)
+        except ValueError as e:
+            self.view.render(e)
+
+    def delete_note(self):
+        name = self.view.get_contact_name()
+        note_id = self.view.get_note_id()
+        try:
+            self.model.delete_note(name, note_id)
+            self.view.delete_note_result(name, note_id)
+        except ValueError as e:
+            self.view.render(e)

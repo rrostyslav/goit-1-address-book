@@ -121,12 +121,11 @@ class AddressBook:
             raise ValueError("Contact not found.")
 
     @notify_observers(Observers.AddNotes)
-    def add_notes(self, name, notes):
+    def add_notes(self, name, note):
         record = self.find(name)
         if record is None:
             raise ValueError("Contact not found.")
-        record.add_notes(notes)
-
+        record.add_notes(note)
         return name
 
     @notify_observers(Observers.ShowNotes)
@@ -134,14 +133,30 @@ class AddressBook:
         record = self.find(name)
         if record is None:
             raise ValueError("Contact not found.")
-        notes = record.get_notes()
-
-        return name, notes
+        return record.notes
     
     @notify_observers(Observers.SaveData)
     def save_data(self, filename="addressbook.pkl"):
         with open(filename, "wb") as f:
            pickle.dump(self, f)
+
+    @notify_observers(Observers.EditNotes)
+    def edit_note(self, name, note_id, new_content):
+        record = self.find(name)
+        if record is None:
+            raise ValueError("Contact not found.")
+        if note_id < 1 or note_id > len(record.notes):
+            raise ValueError("Note ID not found.")
+        record.notes[note_id - 1].value = new_content  # Індексація з 0
+
+    @notify_observers(Observers.DeleteNote)
+    def delete_note(self, name, note_id):
+        record = self.find(name)
+        if record is None:
+            raise ValueError("Contact not found.")
+        if note_id < 1 or note_id > len(record.notes):
+            raise ValueError("Note ID not found.")
+        record.delete_note(note_id - 1)  # Індексація з 0
 
 
 def load_data(filename="addressbook.pkl"):
@@ -149,4 +164,4 @@ def load_data(filename="addressbook.pkl"):
         with open(filename, "rb") as f:
             return pickle.load(f)
     except FileNotFoundError:
-        return AddressBook()       
+        return AddressBook()

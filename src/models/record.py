@@ -26,12 +26,14 @@ class Record:
     def add_address(self, address):
         self.address = Address(address)
 
-    def add_notes(self, notes):
-        note = Notes(notes)
-        self.notes.append(note)
+    def add_notes(self, note):
+        self.notes.append(Notes(note))
 
     def get_notes(self):
         return "\n".join(str(note) for note in self.notes) if self.notes else None
 
     def get_birthday(self):
         return self.birthday.value if self.birthday else None
+
+    def delete_note(self, note_id):
+        del self.notes[note_id]

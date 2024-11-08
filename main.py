@@ -24,13 +24,15 @@ def main():
     print("10. Change name of contact")
     print("11. Add notes")
     print("12. Show notes")
+    print("13. Edit notes")  # Новий пункт для редагування нотаток
+    print("14. Delete note")  # Новий пункт для видалення нотаток
 
     while True:
         try:
             option = input_number(
                 prompt="Select option number: ",
                 min_value=0,
-                max_value=12,
+                max_value=14,  # Оновлено максимальне значення
             )
 
             match option:
@@ -58,12 +60,16 @@ def main():
                     controller.add_notes()
                 case 12:
                     controller.show_notes()
+                case 13:
+                    controller.edit_notes()  # Виклик нового методу редагування нотаток
+                case 14:
+                    controller.delete_note()  # Виклик нового методу видалення нотаток
                 case 0:
                     print("Good bye")
                     address_book.save_data()
                     break
         except KeyboardInterrupt:
-            print("\nGood bye") 
+            print("\nGood bye")
             address_book.save_data()
             break
 

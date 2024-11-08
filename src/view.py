@@ -90,22 +90,22 @@ class View:
 
     @staticmethod
     def add_notes():
-        name = input_string("Enter name of contact o add notes: ")
-        number_of_notes = input_number("How much notes you want to add (number): ")
-        notes = []
-
-        for i in range(number_of_notes):
-            note = input_string(f"Enter note #{i+1}")
-            notes.append(note)
-
-        return name, ', '.join(notes)
+        name = input_string("Enter name of contact to add notes: ")
+        note = input_string("Enter note: ")
+        return name, note
 
     @staticmethod
     def show_notes():
-        name = input_string("Enter name: ")
+        return input_string("Enter name: ")
 
-        return name
+    def get_contact_name(self):
+        return input_string("Enter the name of the contact: ")
 
+    def get_note_id(self):
+        return input_number("Enter the ID of the note to delete: ")
+
+    def get_new_note_content(self):
+        return input_string("Enter the new content for the note: ")
 
     # Output
 
@@ -202,6 +202,16 @@ class View:
 
     @observer(Observers.ShowNotes)
     def show_notes_result(self, **kwargs):
-        name, notes = kwargs.get('result')
+        name = kwargs.get('args')[0]
+        notes = kwargs.get('result')
+        if not notes:
+            self.render(f"No notes found for {name}.")
+        else:
+            notes_list = "\n".join([f"{idx + 1}. {note}" for idx, note in enumerate(notes)])
+            self.render(f"{name}'s notes:\n{notes_list}")
 
-        self.render(f"{name}'s notes:\n{notes}" if notes else f"{name} has no notes recorded.")
+    def edit_notes_result(self, name, note_id):
+        self.render(f"Note {note_id} for contact {name} updated successfully.")
+
+    def delete_note_result(self, name, note_id):
+        self.render(f"Note {note_id} for contact {name} deleted successfully.")

@@ -14,5 +14,7 @@ class Observers(Enum):
     ShowBirthday = 'ShowBirthday'
     AddNotes = 'AddNotes'
     ShowNotes = 'ShowNotes'
+    EditNotes = 'edit_notes'
     ChangeContactPhone = 'ChangeContactPhone'
     ShowAllContacts = 'ShowAllContacts'
+    DeleteNote = 'delete_note'
