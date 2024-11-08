@@ -1,6 +1,8 @@
 from enum import Enum
 
 class Observers(Enum):
+    LoadData = 'LoadData'
+    SaveData = 'SaveData'
     AddContact = 'AddContact'
     ShowPhone = 'ShowPhone'
     ShowBirthdaysInDays = 'BirthdaysInDays'
