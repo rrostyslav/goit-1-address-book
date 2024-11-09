@@ -110,3 +110,17 @@ class Controller:
         name = self.view.show_notes()
         # Викликає метод моделі для показу нотаток
         self.model.show_notes(name)
+
+    # Додає тег до конкретної нотатки контакту
+    def add_tag(self):
+        # Отримує ім'я контакту, індекс нотатки та тег від користувача
+        name, note_index, tag = self.view.add_tag()
+        # Викликає метод моделі для додавання тегу до нотатки
+        self.model.add_tag(name, note_index, tag)
+
+    # Пошук нотаток за тегом
+    def search_notes_by_tag(self):
+        # Отримує тег для пошуку від користувача
+        tag = self.view.search_notes_by_tag()
+        # Викликає метод моделі для пошуку нотаток за тегом
+        self.model.search_notes_by_tag(tag)

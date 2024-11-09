@@ -114,12 +114,30 @@ class View:
 
         return name, ', '.join(notes)
 
+    def add_tag(self):
+        # Запитує ім'я контакту, індекс нотатки та тег для додавання
+        while True:
+            name = input_string("Enter contact name: ")
+            if not self.__model__.find(name):
+                print(f"Contact with name '{name}' does not exist. Please enter a valid contact name.")
+            else:
+                break
+        note_index = input_number("Enter note index to add tag: ")
+        tag = input_string("Enter tag to add: ")
+        return name, note_index, tag
+
     @staticmethod
     def show_notes():
         # Запитує ім'я контакту для показу нотаток
         name = input_string("Enter name: ")
 
         return name
+
+    @staticmethod
+    def search_notes_by_tag():
+        # Запитує тег для пошуку нотаток
+        tag = input_string("Enter tag to search notes: ")
+        return tag
 
     # Методи виведення даних
 
@@ -225,12 +243,20 @@ class View:
     def add_notes_result(self, **kwargs):
         # Відображає результат додавання нотаток
         name = kwargs.get('result')
-
         self.render(f"Notes for {name} added.")
 
     @observer(Observers.ShowNotes)
     def show_notes_result(self, **kwargs):
         # Відображає нотатки для вказаного контакту
         name, notes = kwargs.get('result')
-
         self.render(f"{name}'s notes:\n{notes}" if notes else f"{name} has no notes recorded.")
+
+    @observer(Observers.ShowTags)
+    def search_notes_by_tag_result(self, **kwargs):
+        # Відображає результати пошуку нотаток за тегом
+        tag = kwargs.get('args')[0] if kwargs.get('args') else None
+        contacts = kwargs.get('result')
+        if not contacts:
+            self.render(f"No contacts found with tag '{tag}'.")
+        else:
+            self.render(f"Contacts with tag '{tag}': " + ", ".join(contacts))

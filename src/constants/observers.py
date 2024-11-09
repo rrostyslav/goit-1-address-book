@@ -17,3 +17,5 @@ class Observers(Enum):
     ShowNotes = 'ShowNotes'  # Сповіщення для показу нотаток контакту
     ChangeContactPhone = 'ChangeContactPhone'  # Сповіщення для зміни номера телефону контакту
     ShowAllContacts = 'ShowAllContacts'  # Сповіщення для показу всіх контактів
+    AddNoteTags = "AddNoteTags"
+    ShowTags = "ShowTags"
