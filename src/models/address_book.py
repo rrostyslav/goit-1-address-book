@@ -142,33 +142,36 @@ class AddressBook:
     def add_tag(self, name, note_index, tag):
         record = self.find(name)
         if record is None:
-            raise ValueError("Contact not found.")
+            print(f"Contact with name '{name}' not found. Please enter a valid contact name.")
+            return None
         if hasattr(record, 'notes') and record.notes is not None:
             if note_index < 0 or note_index >= len(record.notes):
-                raise ValueError("Invalid note index.")
+                print(f"Invalid note index '{note_index}'. Please enter a valid note index.")
+                return None
             record.notes[note_index].add_tag(tag)
             return name, note_index, tag
         else:
-            raise ValueError("No notes found for this contact.")
+            print("No notes found for this contact.")
+            return None
 
     # Метод для пошуку нотаток за тегом
     @notify_observers(Observers.ShowTags)
     def search_notes_by_tag(self, tag):
-        contacts_with_tag = []
+        notes_with_tag = []
         for record in self.contacts.values():
             if hasattr(record, 'notes') and record.notes is not None:
                 for note in record.notes:
                     if note.has_tag(tag):
-                        contacts_with_tag.append(record.name.value)
-                        break
-        return contacts_with_tag
+                        notes_with_tag.append(str(note))
+        return notes_with_tag
 
     # Метод для показу нотаток контакту
     @notify_observers(Observers.ShowNotes)
     def show_notes(self, name):
         record = self.find(name)
         if record is None:
-            raise ValueError("Contact not found.")
+            print(f"Contact with name '{name}' does not exist. Please enter a valid contact name.")
+            return None
         notes = record.get_notes()
         return name, notes
 

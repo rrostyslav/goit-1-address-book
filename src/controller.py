@@ -102,7 +102,10 @@ class Controller:
         # Отримує ім'я контакту та нотатки від користувача
         name, notes = self.view.add_notes()
         # Викликає метод моделі для додавання нотаток
-        self.model.add_notes(name, notes)
+        try:
+            self.model.add_notes(name, notes)
+        except Exception as e:
+            print(e)    
 
     # Показує нотатки для контакту
     def show_notes(self):
@@ -124,3 +127,16 @@ class Controller:
         tag = self.view.search_notes_by_tag()
         # Викликає метод моделі для пошуку нотаток за тегом
         self.model.search_notes_by_tag(tag)
+
+    def delete_note(self):
+        name, index = self.view.delete_note()
+        try:
+            self.model.delete_note(name, index)
+        except Exception as e:
+            print(e)
+    def edit_note(self):
+        name, index, new_note = self.view.edit_note()
+        try:
+            self.model.edit_note(name, index, new_note)
+        except Exception as e:
+            print(e)   

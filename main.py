@@ -26,8 +26,10 @@ def main():
     print("10. Change name of contact")
     print("11. Add notes")
     print("12. Show notes")
-    print("13. Add tag to notes")
-    print("14. Search notes by tag")
+    print("13. Edit note")
+    print("14. Delete note")
+    print("15. Add tag to notes")
+    print("16. Search notes by tag")
 
     while True:
         try:
@@ -35,7 +37,7 @@ def main():
             option = input_number(
                 prompt="Select option number: ",
                 min_value=0,
-                max_value=14,
+                max_value=16,
             )
 
             # Виконує відповідну дію, залежно від вибраної опції
@@ -65,8 +67,12 @@ def main():
                 case 12:
                     controller.show_notes()  # Показує нотатки
                 case 13:
-                    controller.add_tag()  # Додає тег до існуючої нотатки
+                    controller.edit_note()
                 case 14:
+                    controller.delete_note()    
+                case 15:
+                    controller.add_tag()  # Додає тег до існуючої нотатки
+                case 16:
                     controller.search_notes_by_tag()  # Пошук нотаток за тегами
                 case 0:
                     # Завершує роботу програми, зберігаючи дані адресної книги
