@@ -154,15 +154,15 @@ class AddressBook:
     # Метод для пошуку нотаток за тегом
     @notify_observers(Observers.ShowTags)
     def search_notes_by_tag(self, tag):
-        contacts_with_tag = []
+        notes_with_tag = []
         for record in self.contacts.values():
             if hasattr(record, 'notes') and record.notes is not None:
                 for note in record.notes:
                     if note.has_tag(tag):
-                        contacts_with_tag.append(record.name.value)
+                        notes_with_tag.append(record.name.value)
                         break
-        return contacts_with_tag
-
+        return notes_with_tag
+    
     # Метод для показу нотаток контакту
     @notify_observers(Observers.ShowNotes)
     def show_notes(self, name):
@@ -195,10 +195,29 @@ class AddressBook:
         record.edit_note_by_index(index - 1, new_note)  # Adjusting for 1-based index
         return index, name
 
-# Функція для завантаження даних адресної книги з файлу
+    # Функція для завантаження даних адресної книги з файлу
+    
+        
+    @notify_observers(Observers.DeleteNote)
+    def delete_note(self, name, index):
+        record = self.find(name)
+        if record is None:
+            raise ValueError("Contact not found.")
+        record.delete_note_by_index(index - 1)
+        return index, name
+    
+    @notify_observers(Observers.EditNote)
+    def edit_note(self, name, index, new_note):
+        record = self.find(name)
+        if record is None:
+            raise ValueError("Contact not found.")
+        record.edit_note_by_index(index - 1, new_note)  # Adjusting for 1-based index
+        return index, name   
+
+    
 def load_data(filename="addressbook.pkl"):
     try:
         with open(filename, "rb") as f:
             return pickle.load(f)
     except FileNotFoundError:
-        return AddressBook()
+        return AddressBook()      

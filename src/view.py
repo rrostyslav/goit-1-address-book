@@ -255,8 +255,31 @@ class View:
     def search_notes_by_tag_result(self, **kwargs):
         # Відображає результати пошуку нотаток за тегом
         tag = kwargs.get('args')[0] if kwargs.get('args') else None
-        contacts = kwargs.get('result')
-        if not contacts:
+        note = kwargs.get('result')
+        if not note:
             self.render(f"No contacts found with tag '{tag}'.")
         else:
-            self.render(f"Contacts with tag '{tag}': " + ", ".join(contacts))
+            self.render(f"Contacts with tag '{tag}': " + ", ".join(note))
+
+    @staticmethod
+    def delete_note():
+        name = input_string("Enter name of contact: ")
+        index = input_number("Enter index to delete note: ")
+        return name, index
+    
+    @staticmethod
+    def edit_note():
+        name = input_string("Enter name of contact: ")
+        index = input_number("Enter index of note: ")
+        new_note = input_string("Enter text of new note: ")
+        return name, index, new_note 
+
+    @observer(Observers.EditNote)
+    def edit_note_result(self, **kwargs):
+        index, name = kwargs.get('result')
+        self.render(f"Note {index} for {name} updated.")
+
+    @observer(Observers.DeleteNote)
+    def delete_note_result(self, **kwargs):
+        index, name = kwargs.get('result')
+        self.render(f"Note {index} for {name} deleted.")       

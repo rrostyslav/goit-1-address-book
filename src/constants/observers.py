@@ -19,3 +19,5 @@ class Observers(Enum):
     ShowAllContacts = 'ShowAllContacts'  # Сповіщення для показу всіх контактів
     AddNoteTags = "AddNoteTags"
     ShowTags = "ShowTags"
+    DeleteNote = 'DeleteNote'
+    EditNote = 'EditNote'
