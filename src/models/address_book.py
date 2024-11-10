@@ -142,14 +142,17 @@ class AddressBook:
     def add_tag(self, name, note_index, tag):
         record = self.find(name)
         if record is None:
-            raise ValueError("Contact not found.")
+            print(f"Contact with name '{name}' not found. Please enter a valid contact name.")
+            return None
         if hasattr(record, 'notes') and record.notes is not None:
             if note_index < 0 or note_index >= len(record.notes):
-                raise ValueError("Invalid note index.")
+                print(f"Invalid note index '{note_index}'. Please enter a valid note index.")
+                return None
             record.notes[note_index].add_tag(tag)
             return name, note_index, tag
         else:
-            raise ValueError("No notes found for this contact.")
+            print("No notes found for this contact.")
+            return None
 
     # Метод для пошуку нотаток за тегом
     @notify_observers(Observers.ShowTags)
@@ -159,16 +162,16 @@ class AddressBook:
             if hasattr(record, 'notes') and record.notes is not None:
                 for note in record.notes:
                     if note.has_tag(tag):
-                        notes_with_tag.append(record.name.value)
-                        break
+                        notes_with_tag.append(str(note))
         return notes_with_tag
-    
+
     # Метод для показу нотаток контакту
     @notify_observers(Observers.ShowNotes)
     def show_notes(self, name):
         record = self.find(name)
         if record is None:
-            raise ValueError("Contact not found.")
+            print(f"Contact with name '{name}' does not exist. Please enter a valid contact name.")
+            return None
         notes = record.get_notes()
         return name, notes
 
@@ -195,29 +198,10 @@ class AddressBook:
         record.edit_note_by_index(index - 1, new_note)  # Adjusting for 1-based index
         return index, name
 
-    # Функція для завантаження даних адресної книги з файлу
-    
-        
-    @notify_observers(Observers.DeleteNote)
-    def delete_note(self, name, index):
-        record = self.find(name)
-        if record is None:
-            raise ValueError("Contact not found.")
-        record.delete_note_by_index(index - 1)
-        return index, name
-    
-    @notify_observers(Observers.EditNote)
-    def edit_note(self, name, index, new_note):
-        record = self.find(name)
-        if record is None:
-            raise ValueError("Contact not found.")
-        record.edit_note_by_index(index - 1, new_note)  # Adjusting for 1-based index
-        return index, name   
-
-    
+# Функція для завантаження даних адресної книги з файлу
 def load_data(filename="addressbook.pkl"):
     try:
         with open(filename, "rb") as f:
             return pickle.load(f)
     except FileNotFoundError:
-        return AddressBook()      
+        return AddressBook()

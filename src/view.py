@@ -21,6 +21,12 @@ class View:
     # Методи введення даних
 
     @staticmethod
+    def search_notes_by_tag():
+        # Запитує тег для пошуку нотаток
+        tag = input_string("Enter tag to search notes: ")
+        return tag
+
+    @staticmethod
     def add_contact():
         # Запитує ім'я та телефон для нового контакту
         name = input_string("Enter name: ")
@@ -105,26 +111,11 @@ class View:
     def add_notes():
         # Запитує ім'я контакту та додає нотатки
         name = input_string("Enter name of contact to add notes: ")
-        number_of_notes = input_number("How many notes do you want to add (number): ")
         notes = []
-
-        for i in range(number_of_notes):
-            note = input_string(f"Enter note #{i+1}")
-            notes.append(note)
+        note = input_string(f"Enter note: ")
+        notes.append(note)
 
         return name, ', '.join(notes)
-
-    def add_tag(self):
-        # Запитує ім'я контакту, індекс нотатки та тег для додавання
-        while True:
-            name = input_string("Enter contact name: ")
-            if not self.__model__.find(name):
-                print(f"Contact with name '{name}' does not exist. Please enter a valid contact name.")
-            else:
-                break
-        note_index = input_number("Enter note index to add tag: ")
-        tag = input_string("Enter tag to add: ")
-        return name, note_index, tag
 
     @staticmethod
     def show_notes():
@@ -134,12 +125,46 @@ class View:
         return name
 
     @staticmethod
-    def search_notes_by_tag():
-        # Запитує тег для пошуку нотаток
-        tag = input_string("Enter tag to search notes: ")
-        return tag
+    def delete_note():
+        name = input_string("Enter name of contact: ")
+        index = input_number("Enter index to delete note: ")
 
+        return name, index
+
+    @staticmethod
+    def edit_note():
+        name = input_string("Enter name of contact: ")
+        index = input_number("Enter index of note: ")
+        new_note = input_string("Enter text of new note: ")
+
+        return name, index, new_note
+
+
+
+    # Output
     # Методи виведення даних
+
+    @observer(Observers.ShowTags)
+    def search_notes_by_tag_result(self, **kwargs):
+        # Відображає результати пошуку нотаток за тегом
+        tag = kwargs.get('args')[0] if kwargs.get('args') else None
+        notes = kwargs.get('result')
+        if not notes:
+            self.render(f"No notes found with tag '{tag}'.")
+        else:
+            self.render(f"Notes with tag '{tag}':" + "".join(notes))
+
+    @observer(Observers.EditNote)
+    def edit_note_result(self, **kwargs):
+        index, name = kwargs.get('result')
+
+        self.render(f"Note {index} for {name} updated.")
+
+    @observer(Observers.DeleteNote)
+    def delete_note_result(self, **kwargs):
+        index, name = kwargs.get('result')
+
+        self.render(f"Note {index} for {name} deleted.")
 
     @observer(Observers.ShowPhone)
     def show_phone_result(self, **kwargs):
@@ -243,43 +268,24 @@ class View:
     def add_notes_result(self, **kwargs):
         # Відображає результат додавання нотаток
         name = kwargs.get('result')
+
         self.render(f"Notes for {name} added.")
 
     @observer(Observers.ShowNotes)
     def show_notes_result(self, **kwargs):
         # Відображає нотатки для вказаного контакту
         name, notes = kwargs.get('result')
+
         self.render(f"{name}'s notes:\n{notes}" if notes else f"{name} has no notes recorded.")
 
-    @observer(Observers.ShowTags)
-    def search_notes_by_tag_result(self, **kwargs):
-        # Відображає результати пошуку нотаток за тегом
-        tag = kwargs.get('args')[0] if kwargs.get('args') else None
-        note = kwargs.get('result')
-        if not note:
-            self.render(f"No contacts found with tag '{tag}'.")
-        else:
-            self.render(f"Contacts with tag '{tag}': " + ", ".join(note))
-
-    @staticmethod
-    def delete_note():
-        name = input_string("Enter name of contact: ")
-        index = input_number("Enter index to delete note: ")
-        return name, index
-    
-    @staticmethod
-    def edit_note():
-        name = input_string("Enter name of contact: ")
-        index = input_number("Enter index of note: ")
-        new_note = input_string("Enter text of new note: ")
-        return name, index, new_note 
-
-    @observer(Observers.EditNote)
-    def edit_note_result(self, **kwargs):
-        index, name = kwargs.get('result')
-        self.render(f"Note {index} for {name} updated.")
-
-    @observer(Observers.DeleteNote)
-    def delete_note_result(self, **kwargs):
-        index, name = kwargs.get('result')
-        self.render(f"Note {index} for {name} deleted.")       
+    def add_tag(self):
+        # Запитує ім'я контакту, індекс нотатки та тег для додавання
+        while True:
+            name = input_string("Enter contact name: ")
+            if not self.__model__.find(name):
+                print(f"Contact with name '{name}' does not exist. Please enter a valid contact name.")
+            else:
+                break
+        note_index = input_number("Enter note index to add tag: ")
+        tag = input_string("Enter tag to add: ")
+        return name, note_index, tag
