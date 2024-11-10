@@ -42,3 +42,15 @@ class Record:
     # Метод для отримання дня народження
     def get_birthday(self):
         return self.birthday.value if self.birthday else None
+
+    def delete_note_by_index(self, index):
+        if 0 <= index < len(self.notes):
+            del self.notes[index]
+        else:
+            raise IndexError("Note index out of range.")
+
+    def edit_note_by_index(self, index, new_note):
+        if 0 <= index < len(self.notes):
+            self.notes[index] = Notes(new_note)
+        else:
+            raise IndexError("Note index out of range.")
