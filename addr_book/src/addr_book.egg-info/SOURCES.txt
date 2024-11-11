@@ -1,0 +1,8 @@
+README.md
+setup.py
+src/addr_book.egg-info/PKG-INFO
+src/addr_book.egg-info/SOURCES.txt
+src/addr_book.egg-info/dependency_links.txt
+src/addr_book.egg-info/entry_points.txt
+src/addr_book.egg-info/requires.txt
+src/addr_book.egg-info/top_level.txt

@@ -1,0 +1,10 @@
+Metadata-Version: 2.1
+Name: addr-book
+Version: 0.0.1
+Summary: CLI Address book
+Author: Jason Dsouza
+Author-email: <youremail@email.com>
+Requires-Python: >=3.5
+Requires-Dist: setuptools
+
+CLI Address book for adding contacts with date of birthday and notes. Providing search by tags
