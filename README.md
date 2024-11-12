@@ -45,12 +45,12 @@ venv\Scripts\activate  # для Windows
 pip install setuptools
 ```
 
-### 4. Установка залежностей
+### 4. Побудова пакету
 ```bash
 pip install -e .
 ```
 
-### 4. Запуск пакету
+### 5. Запуск пакету
 ```bash
 addrbook
 ```
