@@ -4,7 +4,7 @@
 
 # Установка
 
-- Завантажте встановлювальний пакет whl. Завантажити
+- Завантажте встановлювальний пакет whl. [Завантажити](https://github.com/rrostyslav/goit-1-address-book/blob/main/dist/addrbook.whl)
 - Встановіть застосунок
 
 ```bash 
